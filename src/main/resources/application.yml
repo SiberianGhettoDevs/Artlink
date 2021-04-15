@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/artlink_db
+    username: postgre
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
