@@ -1,6 +1,7 @@
 package com.sgd.artlink.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Users")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
