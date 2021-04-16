@@ -2,7 +2,7 @@ spring:
   datasource:
     platform: postgres
     url: jdbc:postgresql://localhost:5432/artlink_db
-    username: postgre
+    username: postgres
     password: root
   jpa:
     hibernate:
