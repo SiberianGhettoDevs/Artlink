@@ -2,12 +2,16 @@ package com.sgd.artlink.security.jwt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
+@Builder
 @AllArgsConstructor
 public class JwtUser implements UserDetails {
 
@@ -18,14 +22,14 @@ public class JwtUser implements UserDetails {
     private final boolean enabled;
     private final GrantedAuthority authority;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
     @JsonIgnore
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     public String getEmail() {
@@ -39,30 +43,30 @@ public class JwtUser implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(authority);
     }
 
     @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+        return true;
     }
 }

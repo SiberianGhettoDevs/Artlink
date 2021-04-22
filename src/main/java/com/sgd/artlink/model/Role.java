@@ -1,6 +1,5 @@
 package com.sgd.artlink.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +18,8 @@ import java.util.Set;
 @Table(name = "Roles")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Role {
+
     public enum Name {
         USER, ADMIN
     }

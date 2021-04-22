@@ -1,38 +1,33 @@
-package com.sgd.artlink;
+package com.sgd.artlink.init;
 
 import com.sgd.artlink.model.Role;
 import com.sgd.artlink.model.User;
 import com.sgd.artlink.repository.RoleRepository;
 import com.sgd.artlink.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
 
 import static com.sgd.artlink.model.Role.Name.ADMIN;
 import static com.sgd.artlink.model.Role.Name.USER;
 import static com.sgd.artlink.model.Status.ACTIVE;
 
-@SpringBootApplication
+@Component
 @Slf4j
-@RequiredArgsConstructor
-public class ArtlinkApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(ArtlinkApplication.class, args);
-    }
+@AllArgsConstructor
+public class UserAndRolesInitializer {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @PostConstruct
-    public void handleContextStart() {
+    @EventListener
+    public void handleContextStart(ContextStartedEvent event) {
+        log.info("handling context start event: {}", event);
+
         final String defaultPassword = passwordEncoder.encode("12345");
 
         Role roleAdmin = new Role();
@@ -63,5 +58,4 @@ public class ArtlinkApplication {
         userRepository.save(user);
         userRepository.save(admin);
     }
-
 }
