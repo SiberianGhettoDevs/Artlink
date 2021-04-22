@@ -1,4 +1,4 @@
-package com.sgd.artlink.controller.impl;
+package com.sgd.artlink.controller;
 
 import com.sgd.artlink.dto.UserDto;
 import com.sgd.artlink.exception.ClientSideException;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,26 +28,20 @@ public class AuthControllerImpl {
     private final UserService userService;
 
     @PostMapping("/signin")
-    public ResponseEntity<Map<Object, Object>> signin(@RequestBody UserDto userDto) {
+    public ResponseEntity<Map<String, String>> signin(@RequestBody UserDto userDto) {
         try {
-            String email = userDto.getEmail();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, userDto.getPassword()));
-            User user = userService.findByEmail(email);
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getEmail(), userDto.getPassword()));
+            User user = userService.findByEmail(userDto.getEmail());
 
-            String token = jwtTokenProvider.createToken(email, user.getRole());
-            Map<Object, Object> response = new HashMap<>();
-            response.put("email", email);
-            response.put("token", token);
-
+            Map<String, String> response = createAuthResponse(user);
             return ResponseEntity.ok(response);
-
         } catch (AuthenticationException e) {
             throw new ClientSideException("Invalid email or password", e);
         }
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody UserDto userDto) {
+    public ResponseEntity<Map<String, String>> signup(@RequestBody UserDto userDto) {
         User user = User.builder()
                         .username(userDto.getUsername())
                         .email(userDto.getEmail())
@@ -57,20 +50,33 @@ public class AuthControllerImpl {
 
         userService.register(user);
 
-        return ResponseEntity.noContent().build();
+        User registeredUser = userService.findByEmail(userDto.getEmail());
+        Map<String, String> response = createAuthResponse(registeredUser);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> users() {
         List<UserDto> users = userService.getAll()
                                         .stream()
-                                        .map(u -> UserDto.builder().id(u.getId())
-                                                                    .username(u.getUsername())
-                                                                    .email(u.getEmail())
-                                                                    .password(u.getPassword())
-                                                                    .role(u.getRole().getName().name())
-                                                                    .build()
+                                        .map(u -> UserDto.builder()
+                                                            .id(u.getId())
+                                                            .username(u.getUsername())
+                                                            .email(u.getEmail())
+                                                            .password(u.getPassword())
+                                                            .role(u.getRole().getName().name())
+                                                            .build()
                                         ).collect(Collectors.toList());
+
         return ResponseEntity.ok(users);
+    }
+
+    private Map<String, String> createAuthResponse(User user) {
+        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+        return Map.of(
+                "email", user.getEmail(),
+                "token", token
+        );
     }
 }
