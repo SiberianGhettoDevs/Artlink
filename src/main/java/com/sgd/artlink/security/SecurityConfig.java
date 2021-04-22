@@ -2,7 +2,6 @@ package com.sgd.artlink.security;
 
 import com.sgd.artlink.model.Role;
 import com.sgd.artlink.security.jwt.JwtConfigurer;
-import com.sgd.artlink.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
