@@ -12,6 +12,7 @@ import com.sgd.artlink.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    //private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User register(User user) {
@@ -40,9 +41,9 @@ public class UserServiceImpl implements UserService {
                                                 log.error("IN register - role not found by name {}", USER.name());
                                                 return new InternalServerException(String.format("Role %s not found", USER.name()));
                                         });
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
 
-        // todo: разобраться с инжектом PasswordEncoder'а
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        user.setPassword(encodedPassword);
         user.setRole(userRole);
         user.setStatus(Status.ACTIVE);
 

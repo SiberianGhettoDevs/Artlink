@@ -1,5 +1,6 @@
 package com.sgd.artlink.security.jwt;
 
+import com.sgd.artlink.exception.AuthenticationException;
 import com.sgd.artlink.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -86,7 +87,7 @@ public class JwtTokenProvider {
                             .getExpiration()
                             .before(now);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
+            throw new AuthenticationException("JWT token is expired or invalid", e);
         }
     }
 }
