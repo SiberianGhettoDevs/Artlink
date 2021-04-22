@@ -3,6 +3,9 @@ package com.sgd.artlink.repository;
 import com.sgd.artlink.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface RoleRepository extends JpaRepository<Role, Long> {
-    Role findByName(String name);
+
+    Optional<Role> findByName(Role.Name name);
 }
